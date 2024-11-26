@@ -33,11 +33,11 @@ public class ClienteDAO {
         String sql = "SELECT * FROM clientes";
         List<Cliente> clientes = new ArrayList<>();
         try (Connection conn = DatabaseConnection.getConnection();
-            PreparedStatement stmt = conn.prepareStatement(sql);
-            ResultSet rs = stmt.executeQuery()) {
+             PreparedStatement stmt = conn.prepareStatement(sql);
+             ResultSet rs = stmt.executeQuery()) {
             while (rs.next()) {
+                // Criando o cliente com os dados do banco
                 Cliente cliente = new Cliente(
-                        rs.getInt("id"),
                         rs.getString("nome"),
                         rs.getString("cpf"),
                         rs.getDate("data_nascimento").toLocalDate(),
@@ -45,49 +45,26 @@ public class ClienteDAO {
                         rs.getString("endereco"),
                         rs.getString("senha")
                 );
+                cliente.setId(rs.getInt("id"));  // Atribuindo o ID após a criação do cliente
                 clientes.add(cliente);
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
         return clientes;
-    }
-
+    }    
+    
     public Cliente autenticarCliente(String cpf, String senha) {
         String sql = "SELECT * FROM clientes WHERE cpf = ? AND senha = ?";
         try (Connection conn = DatabaseConnection.getConnection();
-            PreparedStatement stmt = conn.prepareStatement(sql)) {
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, cpf);
             stmt.setString(2, senha);
     
             try (ResultSet rs = stmt.executeQuery()) {
                 if (rs.next()) {
-                    return new Cliente(
-                        rs.getInt("id"),
-                        rs.getString("nome"),
-                        rs.getString("cpf"),
-                        rs.getDate("data_nascimento").toLocalDate(),
-                        rs.getString("telefone"),
-                        rs.getString("endereco"),
-                        rs.getString("senha")
-                    );
-                }
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
-
-    public Cliente buscarPorCPF(String cpf) {
-        String sql = "SELECT * FROM clientes WHERE cpf = ?";
-        try (Connection conn = DatabaseConnection.getConnection();
-            PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setString(1, cpf);
-            try (ResultSet rs = stmt.executeQuery()) {
-                if (rs.next()) {
-                    return new Cliente(
-                            rs.getInt("id"),
+                    // Criando o cliente com os dados do banco
+                    Cliente cliente = new Cliente(
                             rs.getString("nome"),
                             rs.getString("cpf"),
                             rs.getDate("data_nascimento").toLocalDate(),
@@ -95,13 +72,41 @@ public class ClienteDAO {
                             rs.getString("endereco"),
                             rs.getString("senha")
                     );
+                    cliente.setId(rs.getInt("id"));  // Atribuindo o ID após a criação do cliente
+                    return cliente;
                 }
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return null;
-    }
+        return null; // Caso o cliente não seja encontrado
+    }    
+    
+    public Cliente buscarPorCPF(String cpf) {
+        String sql = "SELECT * FROM clientes WHERE cpf = ?";
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setString(1, cpf);
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    // Criando o cliente com os dados retornados
+                    Cliente cliente = new Cliente(
+                            rs.getString("nome"),
+                            rs.getString("cpf"),
+                            rs.getDate("data_nascimento").toLocalDate(),
+                            rs.getString("telefone"),
+                            rs.getString("endereco"),
+                            rs.getString("senha")
+                    );
+                    cliente.setId(rs.getInt("id"));  // Atribuindo o ID após a criação do cliente
+                    return cliente;
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null; // Retorna null se o cliente não for encontrado
+    }    
 
     public boolean atualizar(Cliente cliente) {
         String sql = "UPDATE clientes SET nome = ?, data_nascimento = ?, telefone = ?, endereco = ?, senha = ? WHERE cpf = ?";

@@ -16,6 +16,7 @@ import javax.swing.JOptionPane;
 import javax.swing.UIManager;
 
 import controller.FuncionarioController;
+import dao.AdministradorDAO;
 
 public class MenuFuncionarioView extends JFrame {
 
@@ -55,8 +56,23 @@ public class MenuFuncionarioView extends JFrame {
         cadastroButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                new CadastroFuncionarioView();  // Abre a tela de cadastro de funcionário
-                dispose();  // Fecha a tela de menu de funcionário
+                // Solicitar senha de administrador
+                String senhaAdm = JOptionPane.showInputDialog("Digite a senha de administrador:");
+
+                // Verificar se a senha foi digitada
+                if (senhaAdm != null && !senhaAdm.isEmpty()) {
+                    AdministradorDAO administradorDAO = new AdministradorDAO();
+                    if (administradorDAO.autenticarAdministrador(senhaAdm)) {
+                        // Se a senha for válida, abre a tela de cadastro de funcionário
+                        new CadastroFuncionarioView();
+                        dispose();  // Fecha o menu de funcionário
+                    } else {
+                        // Exibe uma mensagem de erro se a senha estiver incorreta
+                        JOptionPane.showMessageDialog(null, "Senha de administrador inválida.", "Erro", JOptionPane.ERROR_MESSAGE);
+                    }
+                } else {
+                    JOptionPane.showMessageDialog(null, "A senha não pode estar vazia.", "Erro", JOptionPane.ERROR_MESSAGE);
+                }
             }
         });
         gbc.gridx = 0;
@@ -78,7 +94,7 @@ public class MenuFuncionarioView extends JFrame {
                 FuncionarioController funcionarioController = new FuncionarioController();
                 if (funcionarioController.autenticarFuncionario(cpf, senha)) {
                     // Se o login for bem-sucedido, abre a tela de operações
-                    new OperacoesViews();  
+                    new OperacoesViews();
                     dispose();  // Fecha o menu de funcionário
                 } else {
                     // Exibe mensagem de erro se as credenciais estiverem incorretas

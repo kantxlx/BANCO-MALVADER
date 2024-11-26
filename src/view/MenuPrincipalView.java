@@ -67,7 +67,7 @@ public class MenuPrincipalView extends JFrame {
         clienteButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                new ClientesView();  // Abre o menu do cliente
+                new LoginClienteViews();  // Abre o menu do cliente
                 dispose();  // Fecha a tela de menu principal
             }
         });

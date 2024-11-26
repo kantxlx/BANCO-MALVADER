@@ -14,6 +14,7 @@ public class ContaDAO {
     // Método para inserir uma nova conta no banco de dados
     public boolean inserir(Conta conta) {
         String sql = "INSERT INTO contas (agencia, numero_conta, tipo, saldo, limite, vencimento, cliente_id) VALUES (?, ?, ?, ?, ?, ?, ?)";
+        
         try (Connection conn = DatabaseConnection.getConnection();
             PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, conta.getAgencia());
@@ -22,13 +23,14 @@ public class ContaDAO {
             stmt.setDouble(4, conta.getSaldo());
             stmt.setDouble(5, conta.getLimite());
             stmt.setDate(6, Date.valueOf(conta.getVencimento()));
-            stmt.setInt(7, conta.getClienteId());  // Aqui, o cliente_id deve ser atribuído corretamente
-            stmt.executeUpdate();
-            return true;
+            stmt.setInt(7, conta.getClienteId());
+            
+            int rowsAffected = stmt.executeUpdate();
+            return rowsAffected > 0;
         } catch (SQLException e) {
             e.printStackTrace();
-            return false;
         }
+        return false;
     }
 
     // Método para listar todas as contas
@@ -59,12 +61,13 @@ public class ContaDAO {
 
     public Conta buscarPorClienteId(int clienteId) {
         String sql = "SELECT * FROM contas WHERE cliente_id = ?";
+        
         try (Connection conn = DatabaseConnection.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setInt(1, clienteId);
+            
             try (ResultSet rs = stmt.executeQuery()) {
                 if (rs.next()) {
-                    System.out.println("Conta encontrada: ID = " + rs.getInt("id"));
                     return new Conta(
                         rs.getInt("id"),
                         rs.getString("agencia"),
@@ -80,7 +83,7 @@ public class ContaDAO {
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return null; // Retorna null se não encontrar a conta
+        return null;
     }
     
     public Conta buscarPorClienteCPF(String cpf) {
@@ -108,23 +111,90 @@ public class ContaDAO {
         return null; // Retorna null se não encontrar a conta
     }
 
-    // Método para buscar uma conta pelo número da conta
-    public Conta buscarPorNumero(String numeroConta) {
-        String sql = "SELECT * FROM contas WHERE numero_conta = ?";
+    public Conta buscarContaPorCPF(String cpf) {
+        String sql = "SELECT * FROM contas WHERE cliente_id = (SELECT id FROM clientes WHERE cpf = ?)";
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setString(1, cpf);
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    return new Conta(
+                        rs.getInt("id"),
+                        rs.getString("agencia"),
+                        rs.getString("numero_conta"),
+                        rs.getString("tipo"),
+                        rs.getDouble("saldo"),
+                        rs.getDouble("limite"),
+                        rs.getDate("vencimento").toLocalDate(),
+                        rs.getInt("cliente_id")
+                    );
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;  // Caso a conta não seja encontrada
+    }
+
+    public boolean atualizarConta(Conta conta) {
+        String sql = "UPDATE contas SET saldo = ? WHERE numeroConta = ?";
         try (Connection conn = DatabaseConnection.getConnection();
             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setDouble(1, conta.getSaldo());
+            stmt.setString(2, conta.getNumeroConta());
+            int rowsAffected = stmt.executeUpdate();
+            return rowsAffected > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+    
+    public Conta buscarContaPorNumeroEAgencia(String numeroConta, String agencia) {
+        String sql = "SELECT * FROM contas WHERE numeroConta = ? AND agencia = ?";
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, numeroConta);
+            stmt.setString(2, agencia);
             try (ResultSet rs = stmt.executeQuery()) {
                 if (rs.next()) {
                     return new Conta(
                             rs.getInt("id"),
                             rs.getString("agencia"),
-                            rs.getString("numero_conta"),
+                            rs.getString("numeroConta"),
                             rs.getString("tipo"),
                             rs.getDouble("saldo"),
                             rs.getDouble("limite"),
                             rs.getDate("vencimento").toLocalDate(),
                             rs.getInt("cliente_id")
+                    );
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    // Método para buscar uma conta pelo número da conta
+    public Conta buscarPorNumero(String numeroConta) {
+        String sql = "SELECT * FROM contas WHERE numero_conta = ?";
+        
+        try (Connection conn = DatabaseConnection.getConnection();
+            PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setString(1, numeroConta);
+            
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    return new Conta(
+                        rs.getInt("id"),
+                        rs.getString("agencia"),
+                        rs.getString("numero_conta"),
+                        rs.getString("tipo"),
+                        rs.getDouble("saldo"),
+                        rs.getDouble("limite"),
+                        rs.getDate("vencimento").toLocalDate(),
+                        rs.getInt("cliente_id")
                     );
                 }
             }
@@ -187,14 +257,16 @@ public class ContaDAO {
     // Método para deletar uma conta
     public boolean deletar(String numeroConta) {
         String sql = "DELETE FROM contas WHERE numero_conta = ?";
+        
         try (Connection conn = DatabaseConnection.getConnection();
             PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, numeroConta);
-            stmt.executeUpdate();
-            return true;
+            
+            int rowsAffected = stmt.executeUpdate();
+            return rowsAffected > 0;
         } catch (SQLException e) {
             e.printStackTrace();
-            return false;
         }
+        return false;
     }
 }

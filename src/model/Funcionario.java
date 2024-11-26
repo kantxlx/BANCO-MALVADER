@@ -6,13 +6,17 @@ public class Funcionario {
     private String cpf;
     private String cargo;
     private String senha;
+    private String telefone; // Novo campo telefone
+    private String endereco; // Novo campo endereço
 
-    public Funcionario(int id, String nome, String cpf, String cargo, String senha) {
+    public Funcionario(int id, String nome, String cpf, String cargo, String senha, String telefone, String endereco) {
         this.id = id;
         this.nome = nome;
         this.cpf = cpf;
         this.cargo = cargo;
         this.senha = senha;
+        this.telefone = telefone; // Atribuindo telefone
+        this.endereco = endereco; // Atribuindo endereço
     }
 
     // Getters e Setters
@@ -54,5 +58,21 @@ public class Funcionario {
 
     public void setSenha(String senha) {
         this.senha = senha;
+    }
+
+    public String getTelefone() {
+        return telefone;  // Adicionando getter para telefone
+    }
+
+    public void setTelefone(String telefone) {
+        this.telefone = telefone;  // Adicionando setter para telefone
+    }
+
+    public String getEndereco() {
+        return endereco;  // Adicionando getter para endereco
+    }
+
+    public void setEndereco(String endereco) {
+        this.endereco = endereco;  // Adicionando setter para endereco
     }
 }

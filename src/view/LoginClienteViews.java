@@ -113,24 +113,29 @@ public class LoginClienteViews extends JFrame {
                 System.out.println("Cliente encontrado: " + cliente.getNome());
                 System.out.println("ID do cliente: " + cliente.getId());
     
-                // Busca a conta associada ao cliente autenticado pelo cliente_id
-                Conta conta = contaController.buscarContaPorClienteId(cliente.getId());
+                // Verifique se o ID do cliente é válido
+                if (cliente.getId() == 0) {
+                    JOptionPane.showMessageDialog(null, "Erro: O ID do cliente não foi atribuído corretamente.");
+                    return;
+                }
+    
+                // Busca a conta associada ao cliente autenticado pelo CPF
+                Conta conta = contaController.buscarContaPorCPF(cpf);
                 if (conta != null) {
                     System.out.println("Conta encontrada: Número = " + conta.getNumeroConta());
                     JOptionPane.showMessageDialog(null, "Bem-vindo, " + cliente.getNome() + "!");
-                    new MenuClienteView(conta); // Passando o cliente autenticado
+                    new MenuClienteView(conta); // Passando a conta associada
                     dispose(); // Fecha a tela de login
                 } else {
-                    System.out.println("Conta não encontrada para o cliente ID = " + cliente.getId());
-                    JOptionPane.showMessageDialog(null, "Conta não encontrada para este cliente.");
+                    System.out.println("Conta não encontrada para o cliente CPF = " + cpf);
+                    JOptionPane.showMessageDialog(null, "Conta não localizada. Caso ainda não tenha uma conta, procure um de nossos funcionários!");
                 }
             } else {
                 System.out.println("CPF ou senha inválidos para CPF: " + cpf);
                 JOptionPane.showMessageDialog(null, "CPF ou senha inválidos.");
             }
         }
-    }
-    
+    }    
 
     public static void main(String[] args) {
         new LoginClienteViews();

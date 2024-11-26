@@ -86,12 +86,50 @@ public class CadastroFuncionarioView extends JFrame {
         gbc.gridy = 2;
         add(cargoField, gbc);
 
+        // Telefone do Funcionário
+        JLabel telefoneLabel = new JLabel("Telefone:");
+        telefoneLabel.setFont(font);
+        telefoneLabel.setForeground(Color.BLACK);
+        gbc.gridx = 0;
+        gbc.gridy = 4;
+        gbc.gridwidth = 1;
+        gbc.insets = new Insets(10, 10, 5, 10);
+        add(telefoneLabel, gbc);
+
+        JTextField telefoneField = new JTextField();
+        telefoneField.setFont(font);
+        telefoneField.setPreferredSize(new Dimension(200, 30));
+        gbc.gridx = 1;
+        gbc.gridy = 4;
+        gbc.insets = new Insets(10, 10, 5, 10);
+        add(telefoneField, gbc);
+
+        // Endereço do Funcionário
+        JLabel enderecoLabel = new JLabel("Endereço:");
+        enderecoLabel.setFont(font);
+        enderecoLabel.setForeground(Color.BLACK);
+        gbc.gridx = 0;
+        gbc.gridy = 5;
+        gbc.gridwidth = 1;
+        gbc.insets = new Insets(10, 10, 5, 10);
+        add(enderecoLabel, gbc);
+
+        JTextField enderecoField = new JTextField();
+        enderecoField.setFont(font);
+        enderecoField.setPreferredSize(new Dimension(200, 30));
+        gbc.gridx = 1;
+        gbc.gridy = 5;
+        gbc.insets = new Insets(10, 10, 5, 10);
+        add(enderecoField, gbc);
+
         // Senha do Funcionário
         JLabel senhaLabel = new JLabel("Senha:");
         senhaLabel.setFont(font);
         senhaLabel.setForeground(Color.BLACK);
         gbc.gridx = 0;
         gbc.gridy = 3;
+        gbc.gridwidth = 1;
+        gbc.insets = new Insets(10, 10, 5, 10);
         add(senhaLabel, gbc);
 
         JPasswordField senhaField = new JPasswordField();
@@ -99,6 +137,7 @@ public class CadastroFuncionarioView extends JFrame {
         senhaField.setPreferredSize(new Dimension(200, 30));
         gbc.gridx = 1;
         gbc.gridy = 3;
+        gbc.insets = new Insets(10, 10, 5, 10);
         add(senhaField, gbc);
 
         // Botão "Cadastrar"
@@ -108,26 +147,39 @@ public class CadastroFuncionarioView extends JFrame {
         cadastrarButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                FuncionarioController controller = new FuncionarioController();
-                Funcionario funcionario = new Funcionario(
-                        0,
-                        nomeField.getText(),
-                        cpfField.getText(),
-                        cargoField.getText(),
-                        new String(senhaField.getPassword())
-                );
+                // Captura os dados dos campos
+                String nome = nomeField.getText();
+                String cpf = cpfField.getText();
+                String cargo = cargoField.getText();
+                String senha = new String(senhaField.getPassword());
+                String telefone = telefoneField.getText();
+                String endereco = enderecoField.getText();
 
+                // Validação simples
+                if (nome.isEmpty() || cpf.isEmpty() || cargo.isEmpty() || senha.isEmpty() || telefone.isEmpty() || endereco.isEmpty()) {
+                    JOptionPane.showMessageDialog(null, "Preencha todos os campos.");
+                    return;
+                }
+
+                // Criação do objeto Funcionario
+                Funcionario funcionario = new Funcionario(0, nome, cpf, cargo, senha, telefone, endereco);
+
+                // Chama o método para cadastrar o funcionário
+                FuncionarioController controller = new FuncionarioController();
                 if (controller.cadastrarFuncionario(funcionario)) {
                     JOptionPane.showMessageDialog(null, "Funcionário cadastrado com sucesso!");
-                    dispose();
+                    // Após o sucesso, volta para o MenuFuncionarioView
+                    new MenuFuncionarioView();  // Abre o menu de funcionário novamente
+                    dispose();  // Fecha a janela de cadastro de funcionário
                 } else {
                     JOptionPane.showMessageDialog(null, "Erro ao cadastrar funcionário.");
                 }
             }
         });
         gbc.gridx = 0;
-        gbc.gridy = 4;
-        gbc.gridwidth = 2;  // O botão ocupa as duas colunas
+        gbc.gridy = 6;
+        gbc.gridwidth = 2;
+        gbc.insets = new Insets(15, 10, 10, 10);
         add(cadastrarButton, gbc);
 
         // Botão "Cancelar"
@@ -142,8 +194,9 @@ public class CadastroFuncionarioView extends JFrame {
             }
         });
         gbc.gridx = 0;
-        gbc.gridy = 5;
+        gbc.gridy = 7; // Coloca o botão "Cancelar" na linha 7, logo abaixo do "Cadastrar"
         gbc.gridwidth = 2;  // O botão ocupa as duas colunas
+        gbc.insets = new Insets(10, 10, 10, 10); // Ajustando o espaçamento
         add(cancelarButton, gbc);
 
         // Centraliza a janela na tela e a torna visível

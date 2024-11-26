@@ -32,8 +32,11 @@ CREATE TABLE funcionarios (
     nome VARCHAR(100),
     cpf VARCHAR(11) UNIQUE,
     cargo VARCHAR(50),
-    senha VARCHAR(100)
+    senha VARCHAR(100),
+    telefone VARCHAR(15),
+    endereco VARCHAR(200)
 );
+
 
 -- Tabela de Transações
 CREATE TABLE transacoes (
@@ -44,3 +47,13 @@ CREATE TABLE transacoes (
     data_transacao TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (conta_id) REFERENCES contas(id)
 );
+
+-- Adicionar a tabela de Administradores
+CREATE TABLE administradores (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    nome VARCHAR(100),
+    senha VARCHAR(100) -- Armazena a senha do administrador
+);
+
+-- Inserir o administrador com a senha padrão
+INSERT INTO administradores (nome, senha) VALUES ('Administrador', '1234');

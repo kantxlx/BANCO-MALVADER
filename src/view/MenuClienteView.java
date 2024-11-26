@@ -16,6 +16,7 @@ import javax.swing.JOptionPane;
 import javax.swing.UIManager;
 
 import controller.ContaController;
+import controller.TransacaoController; // Assumindo que exista um controller de transações
 import model.Conta;
 
 public class MenuClienteView extends JFrame {
@@ -33,7 +34,7 @@ public class MenuClienteView extends JFrame {
         this.contaController = new ContaController();
 
         setTitle("Banco Malvader - Menu Cliente");
-        setSize(400, 400);
+        setSize(400, 500);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setLayout(new GridBagLayout());
 
@@ -126,10 +127,29 @@ public class MenuClienteView extends JFrame {
                 }
             }
         });
+
         gbc.gridx = 0;
         gbc.gridy = 3;
         gbc.gridwidth = 2;
         add(saqueButton, gbc);
+
+        // Botão "Ver Extrato"
+        JButton extratoButton = new JButton("Ver Extrato");
+        extratoButton.setFont(font);
+        extratoButton.setPreferredSize(new Dimension(200, 40));
+        extratoButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                // Exibe o extrato de transações
+                TransacaoController transacaoController = new TransacaoController();
+                String extrato = transacaoController.getExtrato(conta.getNumeroConta());
+                JOptionPane.showMessageDialog(null, "Extrato:\n" + extrato);
+            }
+        });
+        gbc.gridx = 0;
+        gbc.gridy = 4;
+        gbc.gridwidth = 2;
+        add(extratoButton, gbc);
 
         // Botão "Ver Dados da Conta"
         JButton dadosButton = new JButton("Ver Dados da Conta");
@@ -144,7 +164,7 @@ public class MenuClienteView extends JFrame {
             }
         });
         gbc.gridx = 0;
-        gbc.gridy = 4;
+        gbc.gridy = 5;
         gbc.gridwidth = 2;
         add(dadosButton, gbc);
 
@@ -160,7 +180,7 @@ public class MenuClienteView extends JFrame {
             }
         });
         gbc.gridx = 0;
-        gbc.gridy = 5;
+        gbc.gridy = 6;
         gbc.gridwidth = 2;
         add(voltarButton, gbc);
 

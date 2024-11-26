@@ -11,16 +11,15 @@ public class Cliente {
     private String endereco;
     private String senha;
 
-    public Cliente(int id, String nome, String cpf, LocalDate dataNascimento, String telefone, String endereco, String senha) {
-        this.id = id;
-        this.nome = nome;
+    public Cliente(String nome, String cpf, LocalDate dataNascimento, String telefone, String endereco, String senha){
+    this.nome = nome;
         this.cpf = cpf;
         this.dataNascimento = dataNascimento;
         this.telefone = telefone;
         this.endereco = endereco;
         this.senha = senha;
     }
-
+    
     // Getters e Setters
     public int getId() {
         return id;
@@ -28,7 +27,7 @@ public class Cliente {
 
     public void setId(int id) {
         this.id = id;
-    }
+    }    
 
     public String getNome() {
         return nome;

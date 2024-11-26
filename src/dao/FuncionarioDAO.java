@@ -13,7 +13,7 @@ public class FuncionarioDAO {
     public boolean inserir(Funcionario funcionario) {
         String sql = "INSERT INTO funcionarios (nome, cpf, cargo, senha) VALUES (?, ?, ?, ?)";
         try (Connection conn = DatabaseConnection.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, funcionario.getNome());
             stmt.setString(2, funcionario.getCpf());
             stmt.setString(3, funcionario.getCargo());
@@ -30,15 +30,18 @@ public class FuncionarioDAO {
         String sql = "SELECT * FROM funcionarios";
         List<Funcionario> funcionarios = new ArrayList<>();
         try (Connection conn = DatabaseConnection.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql);
-             ResultSet rs = stmt.executeQuery()) {
+            PreparedStatement stmt = conn.prepareStatement(sql);
+            ResultSet rs = stmt.executeQuery()) {
+            
             while (rs.next()) {
                 Funcionario funcionario = new Funcionario(
                         rs.getInt("id"),
                         rs.getString("nome"),
                         rs.getString("cpf"),
                         rs.getString("cargo"),
-                        rs.getString("senha")
+                        rs.getString("senha"),
+                        rs.getString("telefone"),
+                        rs.getString("endereco")
                 );
                 funcionarios.add(funcionario);
             }
@@ -51,7 +54,7 @@ public class FuncionarioDAO {
     public Funcionario buscarPorCPF(String cpf) {
         String sql = "SELECT * FROM funcionarios WHERE cpf = ?";
         try (Connection conn = DatabaseConnection.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, cpf);
             try (ResultSet rs = stmt.executeQuery()) {
                 if (rs.next()) {
@@ -60,7 +63,9 @@ public class FuncionarioDAO {
                             rs.getString("nome"),
                             rs.getString("cpf"),
                             rs.getString("cargo"),
-                            rs.getString("senha")
+                            rs.getString("senha"),
+                            rs.getString("telefone"),
+                            rs.getString("endereco")
                     );
                 }
             }
@@ -73,7 +78,7 @@ public class FuncionarioDAO {
     public boolean atualizar(Funcionario funcionario) {
         String sql = "UPDATE funcionarios SET nome = ?, cargo = ?, senha = ? WHERE cpf = ?";
         try (Connection conn = DatabaseConnection.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, funcionario.getNome());
             stmt.setString(2, funcionario.getCargo());
             stmt.setString(3, funcionario.getSenha());
