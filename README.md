@@ -24,7 +24,7 @@ Banco Malvader é um sistema bancário desenvolvido em Java com funcionalidades 
 
 ### Encerramento de Conta:
 - Solicitar senha de administrador para encerrar contas.
-- Permitir busca por número da conta para encerramento.
+- Permitir busca por cpf do cliente para encerramento.
 - Confirmar o encerramento ao usuário após operação bem-sucedida.
 
 ### Consulta de Dados:
@@ -61,7 +61,7 @@ Banco Malvader é um sistema bancário desenvolvido em Java com funcionalidades 
   1. **Saldo**: Mostrar saldo ao cliente (solicitar senha antes de exibir).
   2. **Depósito**: Permitir depósito de valores na conta.
   3. **Saque**: Permitir saque (solicitar senha e verificar saldo).
-  4. **Extrato**: Exibir extrato com movimentações e permitir exportação para CSV.
+  4. **Extrato**: Exibir extrato com movimentações do cliente com data e valores.
   
 - Opção para retornar ao menu principal.
 
