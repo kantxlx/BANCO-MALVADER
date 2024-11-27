@@ -11,13 +11,15 @@ import model.Funcionario;
 
 public class FuncionarioDAO {
     public boolean inserir(Funcionario funcionario) {
-        String sql = "INSERT INTO funcionarios (nome, cpf, cargo, senha) VALUES (?, ?, ?, ?)";
+        String sql = "INSERT INTO funcionarios (nome, cpf, cargo, senha, telefone, endereco) VALUES (?, ?, ?, ?, ?, ?)";
         try (Connection conn = DatabaseConnection.getConnection();
             PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, funcionario.getNome());
             stmt.setString(2, funcionario.getCpf());
             stmt.setString(3, funcionario.getCargo());
             stmt.setString(4, funcionario.getSenha());
+            stmt.setString(5, funcionario.getTelefone());
+            stmt.setString(6, funcionario.getEndereco());
             stmt.executeUpdate();
             return true;
         } catch (SQLException e) {
@@ -25,6 +27,7 @@ public class FuncionarioDAO {
             return false;
         }
     }
+    
 
     public List<Funcionario> listarTodos() {
         String sql = "SELECT * FROM funcionarios";
@@ -76,13 +79,15 @@ public class FuncionarioDAO {
     }
 
     public boolean atualizar(Funcionario funcionario) {
-        String sql = "UPDATE funcionarios SET nome = ?, cargo = ?, senha = ? WHERE cpf = ?";
+        String sql = "UPDATE funcionarios SET nome = ?, cargo = ?, senha = ?, telefone = ?, endereco = ? WHERE cpf = ?";
         try (Connection conn = DatabaseConnection.getConnection();
             PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, funcionario.getNome());
             stmt.setString(2, funcionario.getCargo());
             stmt.setString(3, funcionario.getSenha());
-            stmt.setString(4, funcionario.getCpf());
+            stmt.setString(4, funcionario.getTelefone());
+            stmt.setString(5, funcionario.getEndereco());
+            stmt.setString(6, funcionario.getCpf());
             stmt.executeUpdate();
             return true;
         } catch (SQLException e) {
@@ -90,11 +95,12 @@ public class FuncionarioDAO {
             return false;
         }
     }
+    
 
     public boolean deletar(String cpf) {
         String sql = "DELETE FROM funcionarios WHERE cpf = ?";
         try (Connection conn = DatabaseConnection.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, cpf);
             stmt.executeUpdate();
             return true;

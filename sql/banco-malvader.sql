@@ -37,7 +37,6 @@ CREATE TABLE funcionarios (
     endereco VARCHAR(200)
 );
 
-
 -- Tabela de Transações
 CREATE TABLE transacoes (
     id INT AUTO_INCREMENT PRIMARY KEY,
