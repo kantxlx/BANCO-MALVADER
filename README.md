@@ -1,7 +1,3 @@
-o, incluindo o fluxo de acesso e as opções de menu para o Funcionário e o Cliente:
-
-markdown
-Copiar código
 # Banco Malvader
 
 Banco Malvader é um sistema bancário desenvolvido em Java com funcionalidades básicas de autenticação de usuários (clientes e funcionários), consulta de saldo, depósitos e saques. O projeto foi criado com o objetivo de demonstrar conceitos básicos de programação orientada a objetos, manipulação de banco de dados e interação com o usuário através de uma interface gráfica.
