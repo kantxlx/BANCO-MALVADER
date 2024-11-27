@@ -20,7 +20,7 @@ Banco Malvader é um sistema bancário desenvolvido em Java com funcionalidades 
   - Conta Poupança (CP) e Conta Corrente (CC).
 - **Solicitar dados específicos**:
   - **Poupança**: agência, número da conta, nome do cliente, CPF, data de nascimento, telefone, endereço completo (incluindo CEP, local, número da casa, bairro, cidade, estado), e senha do cliente.
-  - **Corrente**: itens acima, além de limite da conta e data de vencimento.
+  - **Corrente**: itens acima.
 
 ### Encerramento de Conta:
 - Solicitar senha de administrador para encerrar contas.
