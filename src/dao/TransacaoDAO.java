@@ -1,11 +1,11 @@
 package dao;
 
+import java.io.FileWriter;
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
 
 import model.Transacao;
 
@@ -25,51 +25,50 @@ public class TransacaoDAO {
         }
     }
 
-    public List<Transacao> listarTodas() {
-        String sql = "SELECT * FROM transacoes";
-        List<Transacao> transacoes = new ArrayList<>();
-        try (Connection conn = DatabaseConnection.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql);
-             ResultSet rs = stmt.executeQuery()) {
-            while (rs.next()) {
-                Transacao transacao = new Transacao(
-                        rs.getInt("id"),
-                        rs.getInt("conta_id"),
-                        rs.getString("tipo"),
-                        rs.getDouble("valor"),
-                        rs.getTimestamp("data_transacao").toLocalDateTime()
-                );
-                transacoes.add(transacao);
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return transacoes;
-    }
+    public boolean gerarRelatorioMovimentacoesCSV() {
+        String sql = """
+            SELECT t.id, t.conta_id, t.tipo, t.valor, DATE_FORMAT(t.data_transacao, '%d/%m/%Y %H:%i:%s') AS data_formatada, 
+                c.numero_conta, c.agencia
+            FROM transacoes t
+            JOIN contas c ON t.conta_id = c.id
+        """;
 
-    public List<Transacao> listarPorConta(String numeroConta) {
-        String sql = "SELECT t.* FROM transacoes t " +
-                     "INNER JOIN contas c ON t.conta_id = c.id " +
-                     "WHERE c.numero_conta = ?";
-        List<Transacao> transacoes = new ArrayList<>();
+        String arquivoCSV = "Relatorio_Movimentacoes.csv";
+
         try (Connection conn = DatabaseConnection.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setString(1, numeroConta);
-            try (ResultSet rs = stmt.executeQuery()) {
-                while (rs.next()) {
-                    Transacao transacao = new Transacao(
-                            rs.getInt("id"),
-                            rs.getInt("conta_id"),
-                            rs.getString("tipo"),
-                            rs.getDouble("valor"),
-                            rs.getTimestamp("data_transacao").toLocalDateTime()
-                    );
-                    transacoes.add(transacao);
-                }
+            PreparedStatement stmt = conn.prepareStatement(sql);
+            ResultSet rs = stmt.executeQuery();
+            FileWriter writer = new FileWriter(arquivoCSV)) {
+
+            // Escrever cabeçalho no arquivo CSV
+            String[] colunas = {"ID", "Conta ID", "Número da Conta", "Agência", "Tipo", "Valor", "Data da Transação"};
+            writer.append(String.join(",", colunas)).append("\n");
+
+            // Preencher os dados das transações
+            while (rs.next()) {
+                int id = rs.getInt("id");
+                int contaId = rs.getInt("conta_id");
+                String numeroConta = rs.getString("numero_conta");
+                String agencia = rs.getString("agencia");
+                String tipo = rs.getString("tipo");
+                double valor = rs.getDouble("valor");
+                String dataTransacao = rs.getString("data_formatada");
+
+                writer.append(String.valueOf(id)).append(",")
+                    .append(String.valueOf(contaId)).append(",")
+                    .append(numeroConta).append(",")
+                    .append(agencia).append(",")
+                    .append(tipo).append(",")
+                    .append(String.format("%.2f", valor)).append(",")
+                    .append(dataTransacao).append("\n");
             }
-        } catch (SQLException e) {
+
+            System.out.println("Relatório gerado com sucesso no arquivo: " + arquivoCSV);
+            return true;
+
+        } catch (SQLException | IOException e) {
             e.printStackTrace();
+            return false;
         }
-        return transacoes;
     }
 }

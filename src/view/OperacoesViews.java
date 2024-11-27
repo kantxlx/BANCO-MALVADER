@@ -6,6 +6,8 @@ import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
@@ -22,6 +24,7 @@ import javax.swing.UIManager;
 import controller.ClienteController;
 import controller.ContaController;
 import controller.FuncionarioController;
+import controller.TransacaoController;
 import model.Cliente;
 import model.Conta;
 import model.Funcionario;
@@ -29,46 +32,93 @@ import model.Funcionario;
 public class OperacoesViews extends JFrame {
 
     public OperacoesViews() {
-        setTitle("Banco Malvader - Operações");
-        setSize(600, 500);
-        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        setLayout(new GridBagLayout());
-        getContentPane().setBackground(Color.WHITE);
+        try {
+            setTitle("Banco Malvader - Operações");
+            setSize(600, 500);
+            setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+            setLayout(new GridBagLayout());
+            getContentPane().setBackground(Color.WHITE);
 
-        Font font = new Font("Arial", Font.BOLD, 16);
-        GridBagConstraints gbc = new GridBagConstraints();
-        gbc.insets = new Insets(10, 10, 10, 10);
+            Font font = new Font("Arial", Font.BOLD, 16);
+            GridBagConstraints gbc = new GridBagConstraints();
+            gbc.insets = new Insets(10, 10, 10, 10);
 
-        UIManager.put("Button.background", Color.BLACK);
-        UIManager.put("Button.foreground", Color.WHITE);
-        UIManager.put("Button.font", font);
+            UIManager.put("Button.background", Color.BLACK);
+            UIManager.put("Button.foreground", Color.WHITE);
+            UIManager.put("Button.font", font);
 
-        JLabel titleLabel = new JLabel("Escolha uma operação:");
-        titleLabel.setFont(new Font("Arial", Font.BOLD, 20));
-        gbc.gridx = 0;
-        gbc.gridy = 0;
-        gbc.gridwidth = 2;
-        add(titleLabel, gbc);
+            JLabel titleLabel = new JLabel("Escolha uma operação:");
+            titleLabel.setFont(new Font("Arial", Font.BOLD, 20));
+            gbc.gridx = 0;
+            gbc.gridy = 0;
+            gbc.gridwidth = 2;
+            add(titleLabel, gbc);
 
-        // Botões para operações
-        addButton("Abrir Conta", gbc, 1, e -> abrirConta());
-        addButton("Encerrar Conta", gbc, 2, e -> encerrarConta());
-        addButton("Consultar Dados", gbc, 3, e -> consultarDados());
-        addButton("Alterar Dados", gbc, 4, e -> alterarDados());
-        addButton("Realizar Depósito", gbc, 5, e -> realizarDeposito());
-        addButton("Realizar Saque", gbc, 6, e -> realizarSaque());
+            // Botões para operações
+            addButton("Abrir Conta", gbc, 1, e -> abrirConta());
+            addButton("Encerrar Conta", gbc, 2, e -> encerrarConta());
+            addButton("Consultar Dados", gbc, 3, e -> consultarDados());
+            addButton("Alterar Dados", gbc, 4, e -> alterarDados());
+            addButton("Realizar Depósito", gbc, 5, e -> realizarDeposito());
+            addButton("Realizar Saque", gbc, 6, e -> realizarSaque());
 
-        JButton voltarButton = new JButton("Voltar");
-        voltarButton.setFont(font);
-        voltarButton.setPreferredSize(new Dimension(200, 40));
-        voltarButton.addActionListener(e -> dispose());
-        gbc.gridx = 0;
-        gbc.gridy = 7;
-        gbc.gridwidth = 2;
-        add(voltarButton, gbc);
+            // Botão "Gerar Relatório"
+            JButton gerarRelatorioButton = new JButton("Gerar Relatório");
+            gerarRelatorioButton.setFont(font);
+            gerarRelatorioButton.setPreferredSize(new Dimension(200, 40));
+            gerarRelatorioButton.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    // Solicita a autenticação do funcionário
+                    String cpf = JOptionPane.showInputDialog("Confirme seu CPF:");
+                    String senha = JOptionPane.showInputDialog("Digite a senha:");
 
-        setLocationRelativeTo(null);
-        setVisible(true);
+                    // Autentica o funcionário
+                    FuncionarioController funcionarioController = new FuncionarioController();
+                    boolean autenticado = funcionarioController.autenticarFuncionario(cpf, senha);
+
+                    if (autenticado) {
+                        // Geração do relatório se o funcionário for autenticado com sucesso
+                        TransacaoController transacaoController = new TransacaoController();
+                        boolean sucesso = transacaoController.gerarRelatorioMovimentacoesCSV(); // Gera o relatório em CSV
+
+                        if (sucesso) {
+                            JOptionPane.showMessageDialog(null, "Relatório gerado com sucesso no arquivo 'Relatorio_Movimentacoes.csv'.");
+                        } else {
+                            JOptionPane.showMessageDialog(null, "Erro ao gerar o relatório.");
+                        }
+                    } else {
+                        JOptionPane.showMessageDialog(null, "Autenticação falhou. Verifique o CPF e a senha.");
+                    }
+                }
+            });
+
+            gbc.gridx = 0;
+            gbc.gridy = 7;
+            gbc.gridwidth = 2; // Ocupa as 2 colunas
+            add(gerarRelatorioButton, gbc);
+
+            // Botão "Voltar"
+            JButton voltarButton = new JButton("Voltar");
+            voltarButton.setFont(font);
+            voltarButton.setPreferredSize(new Dimension(200, 40));
+            voltarButton.addActionListener(e -> {
+                new MenuPrincipalView(); // Retorna para a tela principal
+                dispose(); // Fecha a tela atual
+            });
+            gbc.gridx = 0;
+            gbc.gridy = 8;
+            gbc.gridwidth = 2;
+            add(voltarButton, gbc);
+
+            setLocationRelativeTo(null);
+            setVisible(true);
+        } catch (Exception ex) {
+            // Exibe a exceção se ocorrer algum erro na inicialização da tela
+            ex.printStackTrace();
+            JOptionPane.showMessageDialog(null, "Erro ao inicializar a tela de operações: " + ex.getMessage());
+            dispose();  // Fecha a janela em caso de erro
+        }
     }
 
     private void addButton(String text, GridBagConstraints gbc, int y, java.awt.event.ActionListener action) {

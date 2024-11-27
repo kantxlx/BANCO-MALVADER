@@ -106,16 +106,19 @@ public class FuncionarioDAO {
 
     public boolean autenticar(String cpf, String senha) {
         String sql = "SELECT * FROM funcionarios WHERE cpf = ? AND senha = ?";
+        
         try (Connection conn = DatabaseConnection.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            PreparedStatement stmt = conn.prepareStatement(sql)) {
+            
             stmt.setString(1, cpf);
             stmt.setString(2, senha);
+            
             try (ResultSet rs = stmt.executeQuery()) {
-                return rs.next();
+                return rs.next();  // Se um registro for encontrado, significa que o login foi bem-sucedido
             }
         } catch (SQLException e) {
             e.printStackTrace();
-            return false;
+            return false;  // Retorna false em caso de erro
         }
     }
 }

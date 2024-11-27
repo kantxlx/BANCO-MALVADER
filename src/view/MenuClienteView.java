@@ -89,6 +89,12 @@ public class MenuClienteView extends JFrame {
                         conta.setSaldo(conta.getSaldo() + valorDeposito);
                         contaController.atualizarSaldo(conta.getNumeroConta(), conta.getSaldo());
                         JOptionPane.showMessageDialog(null, "Depósito de R$ " + valorDeposito + " realizado com sucesso!");
+                        TransacaoController transacaoController = new TransacaoController();
+                        boolean sucesso = transacaoController.registrarTransacao(conta.getId(), "DEPOSITO", valorDeposito);
+
+                        if (!sucesso) {
+                            JOptionPane.showMessageDialog(null, "Erro ao registrar a transação no banco de dados.");
+                        }
                     }
                 } catch (NumberFormatException ex) {
                     JOptionPane.showMessageDialog(null, "Por favor, insira um valor válido para o depósito.");
@@ -118,6 +124,12 @@ public class MenuClienteView extends JFrame {
                             conta.setSaldo(conta.getSaldo() - valorSaque);
                             contaController.atualizarSaldo(conta.getNumeroConta(), conta.getSaldo());
                             JOptionPane.showMessageDialog(null, "Saque de R$ " + valorSaque + " realizado com sucesso!");
+                            TransacaoController transacaoController = new TransacaoController();
+                            boolean sucesso = transacaoController.registrarTransacao(conta.getId(), "SAQUE", valorSaque);
+
+                            if (!sucesso) {
+                                JOptionPane.showMessageDialog(null, "Erro ao registrar a transação no banco de dados.");
+                            }
                         } else {
                             JOptionPane.showMessageDialog(null, "Saldo insuficiente para realizar o saque.");
                         }
@@ -140,7 +152,6 @@ public class MenuClienteView extends JFrame {
         extratoButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                // Exibe o extrato de transações
                 TransacaoController transacaoController = new TransacaoController();
                 String extrato = transacaoController.getExtrato(conta.getNumeroConta());
                 JOptionPane.showMessageDialog(null, "Extrato:\n" + extrato);
