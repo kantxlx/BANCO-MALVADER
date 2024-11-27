@@ -28,7 +28,6 @@ public class FuncionarioDAO {
         }
     }
     
-
     public List<Funcionario> listarTodos() {
         String sql = "SELECT * FROM funcionarios";
         List<Funcionario> funcionarios = new ArrayList<>();
@@ -42,9 +41,9 @@ public class FuncionarioDAO {
                         rs.getString("nome"),
                         rs.getString("cpf"),
                         rs.getString("cargo"),
-                        rs.getString("senha"),
                         rs.getString("telefone"),
-                        rs.getString("endereco")
+                        rs.getString("endereco"),
+                        rs.getString("senha")
                 );
                 funcionarios.add(funcionario);
             }
@@ -66,9 +65,9 @@ public class FuncionarioDAO {
                             rs.getString("nome"),
                             rs.getString("cpf"),
                             rs.getString("cargo"),
-                            rs.getString("senha"),
                             rs.getString("telefone"),
-                            rs.getString("endereco")
+                            rs.getString("endereco"),
+                            rs.getString("senha")
                     );
                 }
             }
@@ -76,7 +75,7 @@ public class FuncionarioDAO {
             e.printStackTrace();
         }
         return null;
-    }
+    }    
 
     public boolean atualizar(Funcionario funcionario) {
         String sql = "UPDATE funcionarios SET nome = ?, cargo = ?, senha = ?, telefone = ?, endereco = ? WHERE cpf = ?";

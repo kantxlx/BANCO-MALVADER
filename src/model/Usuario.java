@@ -1,7 +1,5 @@
 package model;
 
-import java.time.LocalDate;
-
 public abstract class Usuario {
     private int id;
     private String nome;
@@ -10,6 +8,7 @@ public abstract class Usuario {
     private String endereco;
     private String senha;
 
+    // Construtor
     public Usuario(String nome, String cpf, String telefone, String endereco, String senha) {
         this.nome = nome;
         this.cpf = cpf;
