@@ -62,7 +62,6 @@ Banco Malvader é um sistema bancário desenvolvido em Java com funcionalidades 
   2. **Depósito**: Permitir depósito de valores na conta.
   3. **Saque**: Permitir saque (solicitar senha e verificar saldo).
   4. **Extrato**: Exibir extrato com movimentações e permitir exportação para CSV.
-  5. **Consultar Limite**: Exibir limite disponível na conta (solicitar senha).
   
 - Opção para retornar ao menu principal.
 
